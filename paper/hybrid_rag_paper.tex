@@ -1,0 +1,161 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\begin{document}
+
+\title{Hybrid Retrieval-Augmented Generation for Multi-Paper Research Assistance}
+
+\author{\IEEEauthorblockN{Research RAG Team}
+\IEEEauthorblockA{Gen AI / research_rag project}}
+
+\maketitle
+
+\begin{abstract}
+We present a hybrid Retrieval-Augmented Generation (RAG) system designed
+for multi-paper research assistance. The system combines dense and sparse
+text retrieval with a lightweight knowledge graph to improve evidence
+retrieval and grounding for downstream LLM-based answer generation.
+This paper describes the implementation, experimental protocol used to
+compare text-only, graph-only, and hybrid retrieval modes, and provides
+the LaTeX source and instructions to reproduce experiments on the
+project's artifact dataset.
+\end{abstract}
+
+\section{Introduction}
+Retrieval-Augmented Generation (RAG) pairs retrieval components with a
+language model to ground generation in external documents. In this
+work we implement a hybrid index that merges dense (semantic) and
+sparse (BM25) text retrieval for document chunks and augments this with
+a knowledge graph built from structured extractions. The hybrid design
+aims to: (1) improve recall of relevant textual evidence, and (2)
+surface structured relations useful for comparative questions.
+
+\section{System Architecture}
+Our implementation uses three main components:
+\begin{itemize}
+  \item \textbf{Chunk Index (text):} Document chunks are embedded with
+    a SentenceTransformer model and indexed with FAISS for dense
+    retrieval; BM25 (rank\\_bm25) provides sparse lexical scores. A
+    weighted combination of dense and sparse scores produces the final
+    chunk ranking.
+  \item \textbf{Knowledge Graph (graph):} Paper-level extractions are
+    converted to a directed graph via \texttt{networkx}. Nodes include
+    papers, methods, datasets, metrics, and limitations; edges encode
+    relations (e.g., "proposes", "evaluated\_on").
+  \item \textbf{Hybrid Retrieval}: The hybrid pipeline performs both
+    chunk search and graph node neighborhood retrieval. Retrieved
+    items are concatenated into a compact context and passed to an
+    LLM prompt template (the project's \texttt{MultiPaperRAGGenerator}).
+\end{itemize}
+
+Implementation files of interest: [multi_generator.py](multi_generator.py), [graph_index.py](graph_index.py), [multi_rag.py](multi_rag.py).
+
+\section{HybridIndex Details}
+The \texttt{HybridIndex} (in [graph_index.py](graph_index.py)) builds:
+\begin{enumerate}
+  \item Dense FAISS indices for chunk and node embeddings (cosine via normalized IP).
+  \item A BM25 index for lexical matching over chunk tokens.
+  \item A combined score: score $= \alpha\cdot s_{dense} + (1-\alpha)\cdot s_{sparse}$.
+\end{enumerate}
+
+Graph neighborhoods are retrieved via embedding-based node search and
+then expanded with an ego-graph to provide relational context.
+
+\section{Experimental Design}
+We evaluate three retrieval modes:
+\begin{itemize}
+  \item \textbf{Text-only:} Use chunk ranking (dense+sparse) and ignore graph results.
+  \item \textbf{Graph-only:} Use node embedding search and neighborhoods only.
+  \item \textbf{Hybrid:} Use both text and graph retrieval; consider a ground-truth hit if either source returns evidence.
+\end{itemize}
+
+Dataset: we use the project's extracted artifacts (JSON files in \texttt{artifacts/}).
+
+Metrics: For reproducible automated evaluation without invoking an LLM,
+we measure retrieval recall@k relative to ground-truth fields in the
+artifact (e.g., \texttt{method.core\_idea}, \texttt{evaluation.datasets},
+and entries in \texttt{evidence\_map}). For each query derived from a
+paper (e.g., "What is the core idea of PAPER?"), we check whether the
+ground-truth string appears in the top-k chunk text or graph neighborhood.
+
+\section{Runner and Reproducibility}
+We include an experiment runner script at [experiments/compare_rag.py](experiments/compare_rag.py)
+that:
+\begin{enumerate}
+  \item Loads artifact JSONs and synthesizes lightweight text chunks from
+    titles, method core ideas, and evidence snippets.
+  \item Builds the combined knowledge graph using \texttt{GraphBuilder}.
+  \item Constructs a \texttt{HybridIndex} and runs the three retrieval modes.
+  \item Reports recall@k aggregated across queries.
+\end{enumerate}
+
+To reproduce experiments locally (UNIX):
+\begin{verbatim}
+python3 -m pip install -r requirements.txt
+PYTHONPATH="./research_rag" python3 research_rag/experiments/compare_rag.py
+\end{verbatim}
+
+Note: the environment must include the following packages (typical):
+\texttt{faiss-cpu}, \texttt{sentence-transformers}, \texttt{rank_bm25}, \texttt{networkx}.
+If these are not installed, the runner will fail when building the index.
+
+\section{Results}
+The runner reports three aggregate recall measures: text-only, graph-only,
+and hybrid recall@k. In this repository a lightweight run requires the
+dependencies above; if you run the included script it will print the
+summary table. A representative (placeholder) table layout is below —
+the numbers are to be filled by running the script in your environment.
+
+\begin{table}[ht]
+\caption{Retrieval recall@k (placeholder values)}
+\centering
+\begin{tabular}{lccc}
+\toprule
+Mode & Text recall@5 & Graph recall@5 & Hybrid recall@5 \\
+\midrule
+Text-only & 0.52 & - & 0.52 \\
+Graph-only & - & 0.28 & 0.28 \\
+Hybrid & 0.52 & 0.28 & 0.64 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Replace the above with measured values after running the script.
+
+\section{Discussion}
+Preliminary expectations: the hybrid approach should improve overall
+recall by capturing evidence that is either lexically/densely similar
+in chunks or present as structured nodes in the graph (e.g., dataset
+names, limitations). The graph provides structured relations valuable
+for comparison-style queries, while dense text retrieves paraphrased
+evidence.
+
+Limitations: the evaluation above measures retrieval recall only; a
+full evaluation needs LLM-generated answers scored with human
+judgements or automatic QA metrics (BLEU/ROUGE/QA-based F1) after
+generation. LLM access and rate limits affect end-to-end experiments.
+
+\section{Conclusion}
+We described a hybrid RAG implementation for multi-paper research
+assistance, provided a reproducible runner to compare retrieval modes,
+and included the LaTeX source. Running the provided experiment script
+in an environment with the required packages will produce quantitative
+recall comparisons; end-to-end LLM evaluation requires valid API keys
+and will add grounding/hallucination analysis.
+
+\section*{Acknowledgment}
+This work builds on open-source components: FAISS, SentenceTransformers,
+networkx and the project's own extractor and graph-builder modules.
+
+\begin{thebibliography}{1}
+\bibitem{rag}
+S. Lewis et al., "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks," 2020.
+\bibitem{faiss}
+J. Johnson et al., "Billion-scale similarity search with GPUs," 2017.
+\end{thebibliography}
+
+\end{document}

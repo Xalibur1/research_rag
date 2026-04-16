@@ -1,0 +1,175 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://research-rag/paper.schema.json",
+  "title": "Research Paper Artifact",
+  "description": "Canonical schema for a research paper JSON artifact used in multi-paper comparison.",
+  "type": "object",
+  "required": ["paper_id"],
+  "additionalProperties": true,
+  "properties": {
+    "paper_id": {
+      "type": "string",
+      "description": "Unique, stable identifier for the paper."
+    },
+
+    "title": { "type": "string" },
+    "authors": { "type": "array", "items": { "type": "string" } },
+    "venue": { "type": "string" },
+    "year": { "type": "integer" },
+    "abstract": { "type": "string" },
+    "doi_or_arxiv": { "type": "string" },
+
+    "domain": {
+      "type": "string",
+      "description": "Subfield or domain: OCR, RAG, CV, NLP, legal tech, etc."
+    },
+    "research_question": {
+      "type": "string",
+      "description": "The core problem statement or research question."
+    },
+    "task": { "type": "string" },
+    "novelty": {
+      "type": "string",
+      "description": "Key contribution or claim of novelty."
+    },
+
+    "input_type": {
+      "type": "string",
+      "description": "Input format: PDF, image, text, table, multimodal, etc."
+    },
+    "output_type": {
+      "type": "string",
+      "description": "Output format: JSON, labels, spans, embeddings, generated text, etc."
+    },
+
+    "methodology": {
+      "type": "object",
+      "description": "Approach / pipeline details.",
+      "properties": {
+        "name": { "type": "string" },
+        "summary": { "type": "string" },
+        "pipeline_steps": { "type": "array", "items": { "type": "string" } },
+        "architecture": { "type": "string" },
+        "preprocessing": { "type": "string" },
+        "hyperparameters": { "type": "object" },
+        "assumptions": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+
+    "dataset": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "data_details": {
+      "type": "object",
+      "description": "Dataset / data specifics.",
+      "properties": {
+        "size": { "type": "string" },
+        "split": { "type": "string" },
+        "gold_standard": { "type": "string" },
+        "sample_size": { "type": "string" },
+        "public": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+
+    "model": { "type": "string" },
+    "version": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "number" }
+      ]
+    },
+    "baselines": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Baseline methods compared against."
+    },
+
+    "evaluation": {
+      "type": "object",
+      "properties": {
+        "setup": { "type": "string" },
+        "ablations": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Numeric metric values.",
+      "additionalProperties": {
+        "oneOf": [
+          { "type": "number" },
+          { "type": "null" }
+        ]
+      }
+    },
+    "main_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dataset": { "type": "string" },
+          "metric": { "type": "string" },
+          "value": {},
+          "baseline": { "type": "string" },
+          "delta": { "type": "string" }
+        }
+      },
+      "description": "Structured main results with numbers."
+    },
+
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "robustness": {
+      "type": "string",
+      "description": "Robustness or failure cases."
+    },
+    "future_work": { "type": "array", "items": { "type": "string" } },
+    "runtime_efficiency": {
+      "type": "string",
+      "description": "Runtime, efficiency, or scalability notes."
+    },
+
+    "artifacts": {
+      "type": "object",
+      "description": "Code, data, or model links.",
+      "properties": {
+        "code_url": { "type": "string" },
+        "data_url": { "type": "string" },
+        "model_url": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+
+    "sections": {
+      "type": "object",
+      "description": "Paper content organized by section for queryability.",
+      "properties": {
+        "problem": { "type": "string" },
+        "approach": { "type": "string" },
+        "data": { "type": "string" },
+        "experiments": { "type": "string" },
+        "results": { "type": "string" },
+        "discussion": { "type": "string" },
+        "limitations": { "type": "string" },
+        "future_work": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+
+    "inputs": { "type": "object" },
+    "outputs": { "type": "object" },
+
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "source_path": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VeriPaper Hybrid - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#fcf8ff",
+                    "secondary-container": "#fd6016",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#e3e0f5",
+                    "primary-fixed": "#ecdcff",
+                    "inverse-on-surface": "#f2efff",
+                    "on-primary-fixed": "#270057",
+                    "outline-variant": "#cdc3d6",
+                    "surface-tint": "#753bcb",
+                    "error": "#ba1a1a",
+                    "on-tertiary-container": "#fffbff",
+                    "primary-fixed-dim": "#d5baff",
+                    "tertiary": "#7d4887",
+                    "tertiary-fixed": "#fdd6ff",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-low": "#f5f2ff",
+                    "on-primary-fixed-variant": "#5c1ab1",
+                    "on-secondary-fixed": "#380d00",
+                    "secondary-fixed": "#ffdbcf",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#e9e6fb",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#e3e0f5",
+                    "outline": "#7c7485",
+                    "inverse-surface": "#2f2f3f",
+                    "primary": "#7339c8",
+                    "error-container": "#ffdad6",
+                    "on-primary": "#ffffff",
+                    "on-secondary-container": "#541800",
+                    "primary-container": "#8c55e3",
+                    "surface-container": "#efecff",
+                    "surface-dim": "#dad8ed",
+                    "on-tertiary-fixed": "#340141",
+                    "on-background": "#1a1a29",
+                    "on-primary-container": "#fffbff",
+                    "tertiary-container": "#9760a1",
+                    "on-secondary": "#ffffff",
+                    "background": "#fcf8ff",
+                    "surface": "#fcf8ff",
+                    "on-surface-variant": "#4b4453",
+                    "on-surface": "#1a1a29",
+                    "secondary": "#a83900",
+                    "on-secondary-fixed-variant": "#802900",
+                    "on-tertiary-fixed-variant": "#653270",
+                    "secondary-fixed-dim": "#ffb59a",
+                    "inverse-primary": "#d5baff",
+                    "tertiary-fixed-dim": "#f0b1f8"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body id="dashboard-page" class="bg-surface font-body text-on-surface">
+<!-- SideNavBar Shell -->
+<aside class="hidden md:flex h-screen w-64 fixed left-0 top-0 bg-[#f5f2ff] dark:bg-slate-900 flex-col py-8 px-4 z-50">
+<div class="mb-10 px-2">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined" data-icon="hub">hub</span>
+</div>
+<div>
+<h1 class="text-lg font-black text-[#1a1a29] dark:text-white leading-none">Hybrid RAG</h1>
+<p class="font-label text-[10px] uppercase tracking-widest text-primary opacity-70 mt-1">Verified Status: Active</p>
+</div>
+</div>
+<input type="file" id="pdf-upload" accept="application/pdf" style="display: none;">
+<button id="btn-upload" class="w-full py-3 px-4 bg-primary text-white rounded-xl font-label text-xs font-bold uppercase tracking-widest hover:bg-primary-container transition-all flex items-center justify-center gap-2 shadow-sm active:opacity-80">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                <span id="btn-upload-text">New Verification</span>
+            </button>
+</div>
+<nav class="flex-1 space-y-1">
+<a data-nav="dashboard" href="/index.html" class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-800 text-[#7339c8] dark:text-[#a770ff] rounded-lg shadow-sm font-label text-sm font-semibold uppercase tracking-wider">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a data-nav="analysis" href="/analysis.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-[#e3e0f5] dark:hover:bg-slate-800 rounded-lg transition-transform duration-200 hover:translate-x-1 font-label text-sm font-semibold uppercase tracking-wider">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                Paper Analysis
+            </a>
+<a data-nav="compare" href="/compare.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-[#e3e0f5] dark:hover:bg-slate-800 rounded-lg transition-transform duration-200 hover:translate-x-1 font-label text-sm font-semibold uppercase tracking-wider">
+<span class="material-symbols-outlined" data-icon="compare_arrows">compare_arrows</span>
+                Comparison Tool
+            </a>
+<a data-nav="io" href="/io.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-[#e3e0f5] dark:hover:bg-slate-800 rounded-lg transition-transform duration-200 hover:translate-x-1 font-label text-sm font-semibold uppercase tracking-wider">
+<span class="material-symbols-outlined" data-icon="alt_route">alt_route</span>
+                I/O Mapping
+            </a>
+</nav>
+<div class="mt-auto space-y-1 pt-4 border-t border-outline-variant/10">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-[#e3e0f5] dark:hover:bg-slate-800 rounded-lg transition-transform duration-200 hover:translate-x-1 font-label text-sm font-semibold uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+                Documentation
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-[#e3e0f5] dark:hover:bg-slate-800 rounded-lg transition-transform duration-200 hover:translate-x-1 font-label text-sm font-semibold uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                Support
+            </a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="md:ml-64 min-h-screen">
+<!-- TopAppBar -->
+<header class="w-full h-16 flex justify-between items-center px-6 sticky top-0 z-40 bg-[#fcf8ff] dark:bg-slate-950">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative max-w-md w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 font-body" placeholder="Search verified papers..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-[#f5f2ff] rounded-full transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-[#f5f2ff] rounded-full transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="h-8 w-px bg-outline-variant/20 mx-1"></div>
+<div class="flex items-center gap-3 ml-2 group cursor-pointer">
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface font-headline leading-none">Dr. Aris Thorne</p>
+<p class="text-[10px] text-on-surface-variant font-label mt-1">Lead Researcher</p>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xs ring-2 ring-primary/10">AT</div>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="px-8 py-6 space-y-8">
+<!-- Hero Stats Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Stat Card 1: Total Papers -->
+<div class="bg-surface-container-lowest p-6 rounded-xl relative overflow-hidden group">
+<div class="relative z-10">
+<p class="font-label text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Total Papers</p>
+<h3 id="stat-total-papers" class="text-3xl font-black text-on-surface font-headline">—</h3>
+<p class="text-xs text-on-surface-variant font-body mt-4">PDFs processed by the RAG engine</p>
+</div>
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-5xl" data-icon="article">article</span>
+</div>
+</div>
+<!-- Stat Card 2: Knowledge Graph Nodes -->
+<div class="bg-surface-container-lowest p-6 rounded-xl relative overflow-hidden group">
+<div class="relative z-10">
+<p class="font-label text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Graph Nodes</p>
+<h3 id="stat-inputs-mapped" class="text-3xl font-black text-on-surface font-headline">—</h3>
+<p class="text-xs text-on-surface-variant font-body mt-4">Unique entities in the knowledge graph</p>
+</div>
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-5xl" data-icon="hub">hub</span>
+</div>
+</div>
+<!-- Stat Card 3: Method Limitations (real count from extractions) -->
+<div class="bg-surface-container-lowest p-6 rounded-xl relative overflow-hidden group">
+<div class="relative z-10">
+<p class="font-label text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Limitations Found</p>
+<h3 id="stat-flagged" class="text-3xl font-black text-on-surface font-headline">—</h3>
+<p class="text-xs text-on-surface-variant font-body mt-4">Method limitations extracted across papers</p>
+</div>
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-5xl" data-icon="report">report</span>
+</div>
+</div>
+</section>
+
+<!-- Main Dashboard Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Recent Papers List (Editorial List Style) -->
+<div class="lg:col-span-2 space-y-6">
+<div class="flex items-center justify-between">
+<div>
+<h2 class="text-xl font-bold tracking-tight font-headline">Recent Verifications</h2>
+<p class="text-sm text-on-surface-variant font-body">Activity across the hybrid RAG engine</p>
+</div>
+<button class="text-primary font-label text-xs font-bold uppercase tracking-widest hover:underline decoration-2 underline-offset-4">View All Archive</button>
+</div>
+<div id="recent-verifications-list" class="space-y-3">
+    <!-- app.js handles injecting rows here -->
+</div>
+</div>
+<!-- Removed hardcoded Analysis Sidebar and Visual Mapping Engine Image Component -->
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#fcf8ff] dark:bg-slate-900 flex justify-around items-center px-4 z-50 shadow-2xl">
+<a class="flex flex-col items-center gap-1 text-[#7339c8]" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-[10px] font-label font-bold uppercase">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="text-[10px] font-label font-bold uppercase">Analysis</span>
+</a>
+<div class="relative -top-6">
+<button class="w-12 h-12 bg-primary text-white rounded-full shadow-lg flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</div>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined" data-icon="compare_arrows">compare_arrows</span>
+<span class="text-[10px] font-label font-bold uppercase">Compare</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-[10px] font-label font-bold uppercase">Profile</span>
+</a>
+</nav>
+</nav>
+<div id="toast-container" class="fixed bottom-8 right-8 z-50 flex flex-col gap-2"></div>
+<script src="js/app.js"></script>
+</body></html>

@@ -8,6 +8,7 @@ class DocumentChunk(BaseModel):
     page_end: int
     text: str
     section: str = ""
+    paper_id: str = ""
 
 class PDFParser:
     def __init__(self, chunk_size: int = 2000, overlap: int = 200):

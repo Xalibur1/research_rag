@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#fcf8ff",
+                    "secondary-container": "#fd6016",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#e3e0f5",
+                    "primary-fixed": "#ecdcff",
+                    "inverse-on-surface": "#f2efff",
+                    "on-primary-fixed": "#270057",
+                    "outline-variant": "#cdc3d6",
+                    "surface-tint": "#753bcb",
+                    "error": "#ba1a1a",
+                    "on-tertiary-container": "#fffbff",
+                    "primary-fixed-dim": "#d5baff",
+                    "tertiary": "#7d4887",
+                    "tertiary-fixed": "#fdd6ff",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-low": "#f5f2ff",
+                    "on-primary-fixed-variant": "#5c1ab1",
+                    "on-secondary-fixed": "#380d00",
+                    "secondary-fixed": "#ffdbcf",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#e9e6fb",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#e3e0f5",
+                    "outline": "#7c7485",
+                    "inverse-surface": "#2f2f3f",
+                    "primary": "#7339c8",
+                    "error-container": "#ffdad6",
+                    "on-primary": "#ffffff",
+                    "on-secondary-container": "#541800",
+                    "primary-container": "#8c55e3",
+                    "surface-container": "#efecff",
+                    "surface-dim": "#dad8ed",
+                    "on-tertiary-fixed": "#340141",
+                    "on-background": "#1a1a29",
+                    "on-primary-container": "#fffbff",
+                    "tertiary-container": "#9760a1",
+                    "on-secondary": "#ffffff",
+                    "background": "#fcf8ff",
+                    "surface": "#fcf8ff",
+                    "on-surface-variant": "#4b4453",
+                    "on-surface": "#1a1a29",
+                    "secondary": "#a83900",
+                    "on-secondary-fixed-variant": "#802900",
+                    "on-tertiary-fixed-variant": "#653270",
+                    "secondary-fixed-dim": "#ffb59a",
+                    "inverse-primary": "#d5baff",
+                    "tertiary-fixed-dim": "#f0b1f8"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        background-color: #fcf8ff;
+      }
+    </style>
+</head>
+<body id="analysis-page" class="font-body text-on-surface">
+<!-- SideNavBar -->
+<aside class="hidden md:flex w-64 fixed left-0 top-0 h-screen bg-[#f5f2ff] flex-col py-8 px-4 z-50">
+<div class="mb-10 px-2">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined">hub</span>
+</div>
+<div>
+<h1 class="text-lg font-black text-[#1a1a29] leading-none font-headline">Hybrid RAG</h1>
+<p class="font-label text-[10px] uppercase tracking-widest text-primary opacity-70 mt-1">Verified Status: Active</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<a data-nav="dashboard" href="/index.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-[#e3e0f5] hover:translate-x-1 transition-all duration-200 group">
+<span class="material-symbols-outlined text-xl">dashboard</span>
+<span class="font-label text-sm font-semibold uppercase tracking-wider">Dashboard</span>
+</a>
+<a data-nav="analysis" href="/analysis.html" class="flex items-center gap-3 px-4 py-3 bg-white text-[#7339c8] rounded-lg shadow-sm group">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-label text-sm font-semibold uppercase tracking-wider">Paper Analysis</span>
+</a>
+<a data-nav="compare" href="/compare.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-[#e3e0f5] hover:translate-x-1 transition-all duration-200 group">
+<span class="material-symbols-outlined text-xl">compare_arrows</span>
+<span class="font-label text-sm font-semibold uppercase tracking-wider">Comparison Tool</span>
+</a>
+<a data-nav="io" href="/io.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-[#e3e0f5] hover:translate-x-1 transition-all duration-200 group">
+<span class="material-symbols-outlined text-xl">alt_route</span>
+<span class="font-label text-sm font-semibold uppercase tracking-wider">I/O Mapping</span>
+</a>
+</nav>
+<div class="mt-auto pt-8 border-t border-outline-variant/10 space-y-2">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-white py-3 rounded-xl font-label text-sm font-bold uppercase tracking-widest shadow-lg active:scale-95 transition-all duration-150 mb-6">
+                New Verification
+            </button>
+<a class="flex items-center gap-3 px-4 py-2 text-slate-600 hover:bg-[#e3e0f5] transition-all" href="#">
+<span class="material-symbols-outlined text-xl">description</span>
+<span class="font-label text-xs font-semibold uppercase tracking-wider">Documentation</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-slate-600 hover:bg-[#e3e0f5] transition-all" href="#">
+<span class="material-symbols-outlined text-xl">help</span>
+<span class="font-label text-xs font-semibold uppercase tracking-wider">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-8 w-full h-16 bg-[#fcf8ff] sticky top-0 z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-sm focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search verified papers..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-[#f5f2ff] rounded-full transition-colors active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-[#f5f2ff] rounded-full transition-colors active:scale-95">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-8 w-px bg-outline-variant/20 mx-1"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface font-headline leading-none">Researcher</p>
+<p class="text-[10px] text-on-surface-variant font-label mt-0.5">RAG Engine</p>
+</div>
+<div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-white font-bold text-sm">
+R
+</div>
+</div>
+</div>
+</header>
+<div class="p-8 max-w-7xl mx-auto">
+<!-- Breadcrumbs & Status -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<nav class="flex items-center gap-2 mb-2 text-xs font-label text-slate-500 uppercase tracking-widest">
+<span>Archive</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span>Quantum Computing</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-bold">Analysis</span>
+</nav>
+<h2 id="paper-title" class="text-4xl font-extrabold text-on-background tracking-tighter max-w-3xl">Loading...</h2>
+</div>
+<div class="flex flex-col items-end gap-3">
+<div class="bg-primary/5 px-4 py-2 rounded-full border border-primary/10 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-primary text-xs font-bold font-label uppercase tracking-wider">Analysis Complete</span>
+</div>
+<p class="text-[10px] text-slate-400 font-label">ID: RAG-VER-9942-X</p>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Abstract Card (Glassmorphism inspired) -->
+<div class="col-span-12 bg-surface-container-lowest rounded-xl p-8 border border-white shadow-sm">
+<h3 class="text-xs font-bold text-primary font-label uppercase tracking-[0.2em] mb-4">Abstract Overview</h3>
+<p id="paper-abstract" class="text-on-surface/80 leading-relaxed text-lg font-headline font-medium italic">
+                        Loading abstract...
+                    </p>
+<div id="paper-metadata" class="grid grid-cols-3 gap-8 mt-10 pt-8 border-t border-surface-container-low"></div>
+</div>
+<!-- Removed fake Verification Confidence box -->
+<!-- Input Parameters -->
+<div class="col-span-6 bg-surface-container-low rounded-xl p-8">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-secondary">input</span>
+<h3 class="text-sm font-bold text-on-background font-label uppercase tracking-widest">Input Parameters</h3>
+</div>
+<div id="paper-entities" class="space-y-4"></div>
+</div>
+<!-- Output Results -->
+<div class="col-span-6 bg-surface-container-low rounded-xl p-8">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary">output</span>
+<h3 class="text-sm font-bold text-on-background font-label uppercase tracking-widest">Extracted Results</h3>
+</div>
+<div id="paper-results" class="space-y-4"></div>
+</div>
+<!-- Removed fake System Notes & Flags -->
+</div>
+</div>
+</div>
+</main>
+<script src="js/app.js"></script>
+</body></html>

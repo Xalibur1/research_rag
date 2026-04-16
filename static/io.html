@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>I/O Mapping - VeriPaper Hybrid</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#fcf8ff",
+                        "secondary-container": "#fd6016",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e3e0f5",
+                        "primary-fixed": "#ecdcff",
+                        "inverse-on-surface": "#f2efff",
+                        "on-primary-fixed": "#270057",
+                        "outline-variant": "#cdc3d6",
+                        "surface-tint": "#753bcb",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#fffbff",
+                        "primary-fixed-dim": "#d5baff",
+                        "tertiary": "#7d4887",
+                        "tertiary-fixed": "#fdd6ff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f5f2ff",
+                        "on-primary-fixed-variant": "#5c1ab1",
+                        "on-secondary-fixed": "#380d00",
+                        "secondary-fixed": "#ffdbcf",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#e9e6fb",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e3e0f5",
+                        "outline": "#7c7485",
+                        "inverse-surface": "#2f2f3f",
+                        "primary": "#7339c8",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#541800",
+                        "primary-container": "#8c55e3",
+                        "surface-container": "#efecff",
+                        "surface-dim": "#dad8ed",
+                        "on-tertiary-fixed": "#340141",
+                        "on-background": "#1a1a29",
+                        "on-primary-container": "#fffbff",
+                        "tertiary-container": "#9760a1",
+                        "on-secondary": "#ffffff",
+                        "background": "#fcf8ff",
+                        "surface": "#fcf8ff",
+                        "on-surface-variant": "#4b4453",
+                        "on-surface": "#1a1a29",
+                        "secondary": "#a83900",
+                        "on-secondary-fixed-variant": "#802900",
+                        "on-tertiary-fixed-variant": "#653270",
+                        "secondary-fixed-dim": "#ffb59a",
+                        "inverse-primary": "#d5baff",
+                        "tertiary-fixed-dim": "#f0b1f8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(252, 248, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .sankey-node {
+            transition: all 200ms ease-out;
+        }
+        .sankey-node:hover {
+            transform: translateX(4px);
+        }
+        .gradient-cta {
+            background: linear-gradient(135deg, #7339c8 0%, #8c55e3 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- SideNavBar -->
+<aside class="hidden md:flex w-64 fixed left-0 top-0 h-screen bg-[#f5f2ff] dark:bg-slate-900 flex-col py-8 px-4 z-50">
+<div class="mb-10 px-2">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined">hub</span>
+</div>
+<div>
+<h1 class="text-lg font-black text-[#1a1a29] dark:text-white leading-none font-headline">Hybrid RAG</h1>
+<p class="font-label text-[10px] uppercase tracking-widest text-primary opacity-70 mt-1">Verified Status: Active</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<a data-nav="dashboard" href="/index.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-[#e3e0f5] dark:hover:bg-slate-800 hover:translate-x-1 transition-transform duration-200 font-['Manrope'] text-sm font-semibold uppercase tracking-wider rounded-lg active:opacity-80">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a data-nav="analysis" href="/analysis.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-[#e3e0f5] dark:hover:bg-slate-800 hover:translate-x-1 transition-transform duration-200 font-['Manrope'] text-sm font-semibold uppercase tracking-wider rounded-lg active:opacity-80">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                Paper Analysis
+            </a>
+<a data-nav="compare" href="/compare.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-[#e3e0f5] dark:hover:bg-slate-800 hover:translate-x-1 transition-transform duration-200 font-['Manrope'] text-sm font-semibold uppercase tracking-wider rounded-lg active:opacity-80">
+<span class="material-symbols-outlined" data-icon="compare_arrows">compare_arrows</span>
+                Comparison Tool
+            </a>
+<a data-nav="io" href="/io.html" class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-800 text-[#7339c8] dark:text-[#a770ff] rounded-lg shadow-sm font-['Manrope'] text-sm font-semibold uppercase tracking-wider hover:translate-x-1 transition-transform duration-200 active:opacity-80">
+<span class="material-symbols-outlined" data-icon="alt_route">alt_route</span>
+                I/O Mapping
+            </a>
+</nav>
+<div class="mt-auto space-y-2 pt-6 border-t border-outline-variant/10">
+<button class="w-full gradient-cta text-white py-3 rounded-xl font-bold text-sm mb-6 shadow-md hover:opacity-90 active:scale-95 transition-all">
+                New Verification
+            </button>
+<a class="flex items-center gap-3 px-4 py-2 text-slate-500 font-['Manrope'] text-[11px] font-bold uppercase tracking-widest hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="description">description</span>
+                Documentation
+            </a>
+<a class="flex items-center gap-3 px-4 py-2 text-slate-500 font-['Manrope'] text-[11px] font-bold uppercase tracking-widest hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="help">help</span>
+                Support
+            </a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-64 min-h-screen">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-8 w-full h-16 bg-[#fcf8ff] sticky top-0 z-40">
+<div class="flex items-center gap-4 flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400" placeholder="Search verified inputs..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-[#f5f2ff] rounded-full transition-colors active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-[#f5f2ff] rounded-full transition-colors active:scale-95">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-8 w-px bg-outline-variant/20 mx-1"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface font-headline leading-none">Researcher</p>
+<p class="text-[10px] text-on-surface-variant font-label mt-0.5">RAG Engine</p>
+</div>
+<div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-white font-bold text-sm">R</div>
+</div>
+</div>
+</header>
+<!-- Editorial Content Canvas -->
+<div class="p-8 space-y-8">
+<!-- Header Section -->
+<div class="flex justify-between items-end">
+<div>
+<h2 class="text-4xl font-extrabold tracking-tighter text-on-background mb-2">Input/Output <span class="text-primary">Topology</span></h2>
+<p class="text-on-surface-variant max-w-2xl font-medium">Tracing the lineage of verified assertions from source documents through the Hybrid RAG reasoning chain to final validated outputs.</p>
+</div>
+<div class="flex gap-2">
+<span class="px-4 py-2 bg-surface-container-high rounded-full text-xs font-label font-bold text-primary flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+                        14 SOURCE PAPERS
+                    </span>
+<span class="px-4 py-2 bg-surface-container-high rounded-full text-xs font-label font-bold text-secondary flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                        8 VERIFIED OUTPUTS
+                    </span>
+</div>
+</div>
+<!-- Main Visualization Grid -->
+<div class="grid grid-cols-12 gap-6 h-[600px]">
+<!-- Sankey-inspired Visualization Area -->
+<div class="col-span-12 lg:col-span-9 bg-surface-container-lowest rounded-xl p-8 relative overflow-hidden group">
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 2px 2px, #7339c8 1px, transparent 0); background-size: 32px 32px;"></div>
+<div class="relative h-full flex justify-between gap-12">
+<!-- Column 1: Sources -->
+<div class="w-1/4 flex flex-col justify-between py-4">
+<h4 class="font-label text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold mb-6">Verified Inputs</h4>
+<div class="space-y-4">
+<div class="p-3 bg-surface-container-low rounded-lg border-l-4 border-primary/40 sankey-node cursor-pointer">
+<p class="text-xs font-bold truncate">Neural Nets v4.2</p>
+<p class="text-[10px] text-slate-500">Dataset A-19</p>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg border-l-4 border-primary/40 sankey-node cursor-pointer">
+<p class="text-xs font-bold truncate">Quantum Layering</p>
+<p class="text-[10px] text-slate-500">Methodology</p>
+</div>
+<div class="p-3 bg-primary text-white rounded-lg border-l-4 border-white/40 sankey-node cursor-pointer shadow-lg">
+<p class="text-xs font-bold truncate">Semantic Mapping</p>
+<p class="text-[10px] opacity-80 text-white">Active Source</p>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg border-l-4 border-primary/40 sankey-node cursor-pointer">
+<p class="text-xs font-bold truncate">Recursive Logic</p>
+<p class="text-[10px] text-slate-500">Framework</p>
+</div>
+</div>
+</div>
+<!-- Column 2: RAG Reasoning Links (Visual Only) -->
+<div class="flex-1 relative">
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none">
+<!-- Paths from Source 1 -->
+<path d="M 0,60 C 150,60 150,150 300,150" fill="none" stroke="#e3e0f5" stroke-width="2"></path>
+<path d="M 0,130 C 150,130 150,150 300,150" fill="none" stroke="#e3e0f5" stroke-width="4"></path>
+<!-- Active Path -->
+<path d="M 0,200 C 150,200 150,230 300,230" fill="none" stroke="#7339c8" stroke-opacity="0.6" stroke-width="6"></path>
+<path d="M 0,200 C 150,200 150,380 300,380" fill="none" stroke="#7339c8" stroke-opacity="0.3" stroke-width="3"></path>
+<path d="M 0,270 C 150,270 150,450 300,450" fill="none" stroke="#e3e0f5" stroke-width="2"></path>
+</svg>
+</div>
+<!-- Column 3: Processing Nodes -->
+<div class="w-1/4 flex flex-col justify-around py-4">
+<h4 class="font-label text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold mb-6 text-center">Hybrid Logic</h4>
+<div class="space-y-12">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest border-2 border-primary/20 flex items-center justify-center mx-auto relative group/node">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="hub">hub</span>
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover/node:opacity-100 transition-opacity bg-inverse-surface text-inverse-on-surface text-[10px] py-1 px-2 rounded whitespace-nowrap">Cross-Reference</div>
+</div>
+<div class="w-16 h-16 rounded-full bg-primary/10 border-4 border-primary flex items-center justify-center mx-auto relative shadow-[0_0_20px_rgba(115,57,200,0.2)]">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<div class="absolute -right-24 top-1/2 -translate-y-1/2 text-[10px] font-black text-primary uppercase tracking-widest bg-primary-fixed px-2 py-1 rounded">RAG Match</div>
+</div>
+<div class="w-12 h-12 rounded-full bg-surface-container-highest border-2 border-primary/20 flex items-center justify-center mx-auto">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="schema">schema</span>
+</div>
+</div>
+</div>
+<!-- Column 4: Links to Outputs -->
+<div class="flex-1 relative">
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none">
+<path d="M 0,150 C 150,150 150,100 300,100" fill="none" stroke="#e3e0f5" stroke-width="2"></path>
+<path d="M 0,230 C 150,230 150,100 300,100" fill="none" stroke="#7339c8" stroke-opacity="0.8" stroke-width="4"></path>
+<path d="M 0,230 C 150,230 150,300 300,300" fill="none" stroke="#7339c8" stroke-opacity="0.4" stroke-width="2"></path>
+<path d="M 0,450 C 150,450 150,500 300,500" fill="none" stroke="#e3e0f5" stroke-width="2"></path>
+</svg>
+</div>
+<!-- Column 5: Outputs -->
+<div class="w-1/4 flex flex-col justify-between py-4">
+<h4 class="font-label text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold mb-6 text-right">Verified Outputs</h4>
+<div class="space-y-4">
+<div class="p-3 bg-surface-container-low rounded-lg border-r-4 border-secondary/40 sankey-node cursor-pointer flex flex-col items-end">
+<p class="text-xs font-bold text-right">Claim #104-B</p>
+<p class="text-[10px] text-slate-500 text-right">High Confidence</p>
+</div>
+<div class="p-3 bg-secondary-container text-white rounded-lg border-r-4 border-white/40 sankey-node cursor-pointer flex flex-col items-end shadow-lg">
+<p class="text-xs font-bold text-right">Primary Synthesis</p>
+<p class="text-[10px] opacity-80 text-white text-right">Target Output</p>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg border-r-4 border-secondary/40 sankey-node cursor-pointer flex flex-col items-end">
+<p class="text-xs font-bold text-right">Logical Proof 08</p>
+<p class="text-[10px] text-slate-500 text-right">Verified Chain</p>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg border-r-4 border-secondary/40 sankey-node cursor-pointer flex flex-col items-end">
+<p class="text-xs font-bold text-right">Anomaly Data</p>
+<p class="text-[10px] text-slate-500 text-right">Flagged</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Inspector Sidebar (Bento Grid Style) -->
+<div class="col-span-12 lg:col-span-3 space-y-6">
+<!-- Inspector Card -->
+<div class="bg-surface-container-low rounded-xl p-6 shadow-sm border border-outline-variant/10">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="info">info</span>
+<h3 class="font-bold text-sm uppercase tracking-wider">Node Inspector</h3>
+</div>
+<div class="space-y-4">
+<div class="p-3 bg-surface-container-lowest rounded-lg">
+<label class="text-[10px] font-label font-bold text-slate-400 uppercase">Selected Entity</label>
+<p class="text-sm font-bold text-primary">Semantic Mapping Framework</p>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div class="p-3 bg-surface-container-lowest rounded-lg">
+<label class="text-[10px] font-label font-bold text-slate-400 uppercase">Integrity</label>
+<p class="text-sm font-bold">99.2%</p>
+</div>
+<div class="p-3 bg-surface-container-lowest rounded-lg">
+<label class="text-[10px] font-label font-bold text-slate-400 uppercase">Fan-out</label>
+<p class="text-sm font-bold">5 Nodes</p>
+</div>
+</div>
+<div class="p-3 bg-surface-container-lowest rounded-lg border-b-2 border-secondary">
+<label class="text-[10px] font-label font-bold text-slate-400 uppercase">Reasoning Path</label>
+<p class="text-xs leading-relaxed mt-1">Cross-validation against Quantum Layering paper identified a 12% drift in variable naming, resolved through the Hybrid RAG consensus engine.</p>
+</div>
+</div>
+</div>
+<!-- Flow Stats -->
+<div class="bg-primary-container p-6 rounded-xl text-on-primary-container relative overflow-hidden">
+<div class="relative z-10">
+<p class="font-label text-[10px] font-bold uppercase tracking-widest opacity-80">Flow Efficiency</p>
+<h3 class="text-3xl font-black mt-1">84.2<span class="text-sm font-bold">%</span></h3>
+<div class="mt-4 flex items-center gap-2">
+<div class="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden">
+<div class="h-full bg-white w-[84%]"></div>
+</div>
+<span class="text-[10px] font-bold">+2.4%</span>
+</div>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-8xl" data-icon="insights">insights</span>
+</div>
+</div>
+<!-- Action Card -->
+<div class="bg-surface-container-highest rounded-xl p-4 flex items-center justify-between group cursor-pointer hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="file_download">file_download</span>
+</div>
+<div>
+<p class="text-xs font-bold">Export Graph</p>
+<p class="text-[10px] text-slate-500">JSON/SVG format</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Bottom Detail View (Editorial Layer) -->
+<div class="grid grid-cols-3 gap-6">
+<div class="bg-white p-8 rounded-xl border border-outline-variant/10 shadow-sm relative">
+<span class="absolute top-0 right-0 p-4 font-label font-black text-slate-100 text-6xl">01</span>
+<h5 class="text-xs font-black uppercase tracking-widest text-primary mb-4">Input Verification</h5>
+<p class="text-sm font-medium leading-relaxed text-on-surface-variant relative z-10">All inputs are scanned for cryptographic provenance and author credentials before entering the Hybrid RAG processing pool. This ensures a 0% hallucination baseline for source materials.</p>
+</div>
+<div class="bg-white p-8 rounded-xl border border-outline-variant/10 shadow-sm relative">
+<span class="absolute top-0 right-0 p-4 font-label font-black text-slate-100 text-6xl">02</span>
+<h5 class="text-xs font-black uppercase tracking-widest text-primary mb-4">Hybrid Logic Chain</h5>
+<p class="text-sm font-medium leading-relaxed text-on-surface-variant relative z-10">Our proprietary engine merges semantic embeddings with symbolic logic rules. This "Hybrid" approach allows for both contextual nuance and strict mathematical validation of claims.</p>
+</div>
+<div class="bg-white p-8 rounded-xl border border-outline-variant/10 shadow-sm relative">
+<span class="absolute top-0 right-0 p-4 font-label font-black text-slate-100 text-6xl">03</span>
+<h5 class="text-xs font-black uppercase tracking-widest text-primary mb-4">Output Validation</h5>
+<p class="text-sm font-medium leading-relaxed text-on-surface-variant relative z-10">Final assertions must satisfy three independent verifiers. The mapping above visualizes the final consensus paths that reached the 'Golden Output' status.</p>
+</div>
+</div>
+</div>
+</main>
+<div id="toast-container"></div>
+<script src="js/app.js"></script>
+</body></html>

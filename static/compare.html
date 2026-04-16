@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Comparison Tool — Hybrid RAG</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+body { font-family: 'Inter', sans-serif; background-color: #fcf8ff; }
+
+/* Paper picker modal */
+#paper-picker-modal { display: none; }
+#paper-picker-modal.open { display: flex; }
+
+/* Collection panel slide */
+#collection-panel { transition: transform 0.28s cubic-bezier(0.22,1,0.36,1); }
+
+/* Pill chip */
+.paper-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 600;
+    background: #ecdcff; color: #5c1ab1;
+    max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.paper-chip .remove-chip {
+    cursor: pointer; font-size: 14px; opacity: 0.6;
+    flex-shrink: 0; transition: opacity 0.15s;
+}
+.paper-chip .remove-chip:hover { opacity: 1; }
+
+/* Accents for up to 8 selected papers */
+.accent-0 { border-left-color: #7339c8; }
+.accent-1 { border-left-color: #a83900; }
+.accent-2 { border-left-color: #7d4887; }
+.accent-3 { border-left-color: #3a5fa8; }
+.accent-4 { border-left-color: #2f8a4d; }
+.accent-5 { border-left-color: #8a6b2f; }
+.accent-6 { border-left-color: #ba1a1a; }
+.accent-7 { border-left-color: #067474; }
+</style>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                "colors": {
+                    "surface-bright": "#fcf8ff","secondary-container": "#fd6016","on-error-container": "#93000a",
+                    "surface-variant": "#e3e0f5","primary-fixed": "#ecdcff","inverse-on-surface": "#f2efff",
+                    "on-primary-fixed": "#270057","outline-variant": "#cdc3d6","surface-tint": "#753bcb",
+                    "error": "#ba1a1a","primary-fixed-dim": "#d5baff","tertiary": "#7d4887",
+                    "surface-container-low": "#f5f2ff","on-primary-fixed-variant": "#5c1ab1",
+                    "surface-container-high": "#e9e6fb","surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#e3e0f5","outline": "#7c7485","inverse-surface": "#2f2f3f",
+                    "primary": "#7339c8","error-container": "#ffdad6","on-primary": "#ffffff",
+                    "primary-container": "#8c55e3","surface-container": "#efecff","surface-dim": "#dad8ed",
+                    "on-background": "#1a1a29","on-primary-container": "#fffbff","on-secondary": "#ffffff",
+                    "background": "#fcf8ff","surface": "#fcf8ff","on-surface-variant": "#4b4453",
+                    "on-surface": "#1a1a29","secondary": "#a83900","inverse-primary": "#d5baff",
+                },
+                "fontFamily": { "headline": ["Inter"], "body": ["Inter"], "label": ["Manrope"] }
+            },
+        },
+    }
+</script>
+</head>
+<body id="compare-page" class="bg-surface-bright text-on-surface">
+
+<!-- ═══════════════════════════════════════════════
+     PAPER PICKER MODAL
+══════════════════════════════════════════════════ -->
+<div id="paper-picker-modal" class="fixed inset-0 z-[200] items-center justify-center bg-black/40 backdrop-blur-sm open:flex">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
+        <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-outline-variant/20">
+            <div>
+                <h3 class="font-black text-lg text-on-surface">Add Papers</h3>
+                <p class="text-xs text-on-surface-variant mt-0.5">Select papers to include in this comparison</p>
+            </div>
+            <button id="modal-close" class="p-2 hover:bg-surface-container rounded-full">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="px-6 py-4">
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+                <input id="modal-search" type="text" placeholder="Search papers..." class="w-full pl-9 pr-4 py-2.5 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/20"/>
+            </div>
+        </div>
+        <div id="modal-paper-list" class="px-6 pb-2 max-h-72 overflow-y-auto space-y-2">
+            <!-- populated by JS -->
+        </div>
+        <div class="px-6 py-4 bg-surface-container-low flex justify-between items-center">
+            <span id="modal-count" class="text-xs text-on-surface-variant font-label font-semibold"></span>
+            <button id="modal-confirm" class="px-6 py-2 bg-primary text-white font-bold text-sm rounded-xl hover:bg-primary-container transition-colors">
+                Add to Comparison
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     COLLECTION SAVE MODAL
+══════════════════════════════════════════════════ -->
+<div id="collection-save-modal" class="fixed inset-0 z-[200] items-center justify-center bg-black/40 backdrop-blur-sm hidden">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
+        <div class="px-6 pt-6 pb-4 border-b border-outline-variant/20">
+            <h3 class="font-black text-lg">Save as Collection</h3>
+            <p class="text-xs text-on-surface-variant mt-0.5">Group your current paper selection</p>
+        </div>
+        <div class="px-6 py-4 space-y-3">
+            <input id="collection-name-input" type="text" placeholder="Collection name (e.g. Object Detection Papers)" class="w-full px-4 py-2.5 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/20"/>
+        </div>
+        <div class="px-6 py-4 flex gap-3 justify-end">
+            <button id="collection-save-cancel" class="px-5 py-2 text-slate-500 font-semibold text-sm rounded-xl hover:bg-surface-container">Cancel</button>
+            <button id="collection-save-confirm" class="px-6 py-2 bg-primary text-white font-bold text-sm rounded-xl hover:bg-primary-container transition-colors">Save Collection</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════════════════ -->
+<aside class="hidden md:flex w-64 fixed left-0 top-0 h-screen bg-[#f5f2ff] flex-col py-8 px-4 z-50">
+    <div class="mb-10 px-2">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-white shadow-lg">
+                <span class="material-symbols-outlined">hub</span>
+            </div>
+            <div>
+                <h1 class="text-lg font-black text-[#1a1a29] leading-none font-headline">Hybrid RAG</h1>
+                <p class="font-label text-[10px] uppercase tracking-widest text-primary opacity-70 mt-1">Verified Status: Active</p>
+            </div>
+        </div>
+    </div>
+    <nav class="flex-grow space-y-1">
+        <a data-nav="dashboard" href="/index.html" class="flex items-center px-4 py-3 text-slate-600 font-['Manrope'] text-sm font-semibold uppercase tracking-wider hover:translate-x-1 hover:bg-[#e3e0f5] rounded-lg transition-all duration-200">
+            <span class="material-symbols-outlined mr-3">dashboard</span> Dashboard
+        </a>
+        <a data-nav="analysis" href="/analysis.html" class="flex items-center px-4 py-3 text-slate-600 font-['Manrope'] text-sm font-semibold uppercase tracking-wider hover:translate-x-1 hover:bg-[#e3e0f5] rounded-lg transition-all duration-200">
+            <span class="material-symbols-outlined mr-3">analytics</span> Paper Analysis
+        </a>
+        <a data-nav="compare" href="/compare.html" class="flex items-center px-4 py-3 bg-white text-[#7339c8] rounded-lg shadow-sm font-['Manrope'] text-sm font-semibold uppercase tracking-wider">
+            <span class="material-symbols-outlined mr-3">compare_arrows</span> Comparison Tool
+        </a>
+        <a data-nav="io" href="/io.html" class="flex items-center px-4 py-3 text-slate-600 font-['Manrope'] text-sm font-semibold uppercase tracking-wider hover:translate-x-1 hover:bg-[#e3e0f5] rounded-lg transition-all duration-200">
+            <span class="material-symbols-outlined mr-3">alt_route</span> I/O Mapping
+        </a>
+    </nav>
+    <div class="mt-auto space-y-1">
+        <!-- Collections list in sidebar -->
+        <div class="mb-4">
+            <p class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 px-4 mb-2">Collections</p>
+            <div id="sidebar-collections" class="space-y-1">
+                <!-- populated by JS -->
+            </div>
+            <button id="btn-new-collection-sidebar" class="w-full flex items-center gap-2 px-4 py-2 text-primary font-label text-xs font-bold uppercase tracking-wider hover:bg-[#e3e0f5] rounded-lg transition-colors mt-1">
+                <span class="material-symbols-outlined text-sm">add</span> New Collection
+            </button>
+        </div>
+        <a class="flex items-center px-4 py-2 text-slate-600 font-['Manrope'] text-xs font-semibold uppercase tracking-wider hover:translate-x-1 transition-transform" href="#">
+            <span class="material-symbols-outlined mr-3 text-sm">description</span> Documentation
+        </a>
+    </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════════════ -->
+<main class="ml-64 min-h-screen">
+
+    <!-- TopAppBar -->
+    <header class="flex justify-between items-center px-8 w-full h-16 bg-[#fcf8ff] sticky top-0 z-40 border-b border-outline-variant/10">
+        <div class="flex items-center gap-4 flex-1">
+            <div class="relative w-full max-w-md">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+                <input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20" placeholder="Search verified repository..." type="text"/>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <button class="p-2 text-slate-500 hover:bg-[#f5f2ff] rounded-full transition-colors active:scale-95">
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+            <button class="p-2 text-slate-500 hover:bg-[#f5f2ff] rounded-full transition-colors active:scale-95">
+                <span class="material-symbols-outlined">settings</span>
+            </button>
+            <div class="h-8 w-px bg-outline-variant/20 mx-1"></div>
+            <div class="flex items-center gap-3">
+                <div class="text-right">
+                    <p class="text-xs font-bold text-on-surface font-headline leading-none">Researcher</p>
+                    <p class="text-[10px] text-on-surface-variant font-label mt-0.5">RAG Engine</p>
+                </div>
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-white font-bold text-sm">R</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <section class="p-8 space-y-6">
+
+        <!-- Page Header -->
+        <div class="flex justify-between items-end">
+            <div>
+                <span class="font-label text-secondary font-bold text-xs uppercase tracking-widest">Verification Workbench</span>
+                <h2 class="text-4xl font-extrabold tracking-tight text-on-surface mt-1">Comparison Tool</h2>
+            </div>
+            <div class="flex gap-3 items-center flex-wrap">
+                <!-- Active paper chips -->
+                <div id="active-paper-chips" class="flex flex-wrap gap-2 max-w-xl"></div>
+                <button id="btn-add-paper" class="flex items-center gap-2 px-5 py-2.5 border-2 border-dashed border-primary/40 text-primary font-bold text-sm rounded-xl hover:border-primary hover:bg-primary/5 transition-all">
+                    <span class="material-symbols-outlined text-sm">add</span> Add Paper
+                </button>
+                <button id="btn-save-collection" class="flex items-center gap-2 px-5 py-2.5 bg-surface-container-highest text-primary font-bold text-sm rounded-xl hover:bg-surface-variant transition-colors">
+                    <span class="material-symbols-outlined text-sm">folder_open</span> Save Set
+                </button>
+                <button id="btn-clear-all" class="px-4 py-2.5 text-slate-400 font-semibold text-sm rounded-xl hover:bg-surface-container hover:text-slate-600 transition-colors">Clear All</button>
+            </div>
+        </div>
+
+        <!-- Scope Banner -->
+        <div id="scope-banner" class="hidden items-center gap-3 p-4 bg-primary/8 border border-primary/20 rounded-xl">
+            <span class="material-symbols-outlined text-primary text-xl">filter_list</span>
+            <p class="text-sm font-semibold text-primary" id="scope-text">Comparing selected papers</p>
+            <button id="scope-clear" class="ml-auto text-xs font-bold text-primary hover:underline">Compare all instead</button>
+        </div>
+
+        <!-- Main layout: left = chat, right = output -->
+        <div class="grid grid-cols-12 gap-6">
+
+            <!-- Left: query panel + selected papers -->
+            <div class="col-span-3 space-y-4">
+
+                <!-- Active selection list -->
+                <div class="bg-surface-container-lowest rounded-xl border-b-2 border-primary overflow-hidden">
+                    <div class="px-5 pt-5 pb-2 flex items-center justify-between">
+                        <h3 class="font-label text-xs font-bold uppercase text-on-surface-variant">Active Selection</h3>
+                        <span id="selection-count" class="text-[10px] font-bold text-primary font-label bg-primary/10 px-2 py-0.5 rounded-full">0 papers</span>
+                    </div>
+                    <div id="selected-papers-list" class="px-3 pb-3 space-y-2 min-h-[64px]">
+                        <p id="no-selection-hint" class="text-xs text-slate-400 text-center py-4">No papers selected.<br>Click "Add Paper" to begin.</p>
+                    </div>
+                    <div class="px-3 pb-3">
+                        <button id="btn-add-paper-2" class="w-full border-2 border-dashed border-outline-variant py-2.5 rounded-lg text-slate-400 text-xs font-bold flex items-center justify-center gap-2 hover:border-primary hover:text-primary transition-all">
+                            <span class="material-symbols-outlined text-sm">add</span> Add Paper
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Query box -->
+                <div class="bg-surface-container-lowest p-5 rounded-xl">
+                    <h3 class="font-label text-xs font-bold uppercase text-on-surface-variant mb-3">Query Multi-RAG</h3>
+                    <form id="chat-form" class="space-y-3">
+                        <textarea id="chat-input" rows="3" class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 font-body resize-none" placeholder="Compare methodologies, ask about datasets, contrast results..."></textarea>
+                        <button type="submit" id="chat-submit" class="w-full px-4 py-2.5 bg-primary text-white font-bold text-sm rounded-xl uppercase tracking-wider hover:bg-primary-container transition-colors flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">auto_awesome</span>
+                            <span id="chat-submit-text">Analyse</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Collections panel -->
+                <div class="bg-surface-container-lowest rounded-xl overflow-hidden">
+                    <div class="px-5 pt-5 pb-2 flex items-center justify-between">
+                        <h3 class="font-label text-xs font-bold uppercase text-on-surface-variant">My Collections</h3>
+                        <button id="btn-new-collection" class="p-1 hover:bg-surface-container rounded-lg transition-colors">
+                            <span class="material-symbols-outlined text-sm text-primary">add</span>
+                        </button>
+                    </div>
+                    <div id="collections-list" class="px-3 pb-3 space-y-1.5">
+                        <!-- populated by JS -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right: output -->
+            <div class="col-span-9 bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm min-h-[480px] flex flex-col">
+                <div class="px-6 py-5 border-b border-outline-variant/10 flex items-center justify-between">
+                    <h3 class="font-bold text-base text-primary flex items-center gap-2">
+                        <span class="material-symbols-outlined text-lg">psychology</span>
+                        Cross-Paper Intelligence
+                    </h3>
+                    <span id="output-scope-tag" class="text-[10px] font-bold text-on-surface-variant font-label uppercase tracking-widest bg-surface-container px-2 py-1 rounded-full">All Papers</span>
+                </div>
+                <div id="chat-output" class="flex-1 p-6 text-sm font-body text-slate-700 overflow-y-auto">
+                    <div class="flex flex-col items-center justify-center h-full text-center py-16 opacity-50">
+                        <span class="material-symbols-outlined text-5xl mb-3 text-primary">compare_arrows</span>
+                        <p class="font-bold text-on-surface mb-1">No analysis yet</p>
+                        <p class="text-xs text-on-surface-variant">Select papers and submit a query to generate cross-paper insights.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reasoning trace (only shown after query) -->
+        <div id="reasoning-section" class="hidden bg-gradient-to-br from-white to-surface-container-low p-6 rounded-2xl border border-outline-variant/10">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+                <h4 class="font-bold text-base">Reasoning Trace</h4>
+            </div>
+            <p id="reasoning-output" class="text-sm text-on-surface-variant leading-relaxed"></p>
+            <div class="mt-4 pt-4 border-t border-outline-variant/10">
+                <button id="btn-verify-grounding" class="px-4 py-2 bg-secondary-container/10 text-secondary font-bold text-sm rounded-lg hover:bg-secondary-container/20 transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">fact_check</span> Verify Grounding
+                </button>
+                <div id="verify-output" class="hidden mt-4 p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/20">
+                </div>
+            </div>
+        </div>
+
+    </section>
+</main>
+
+<div id="toast-container"></div>
+<script src="js/app.js"></script>
+</body></html>

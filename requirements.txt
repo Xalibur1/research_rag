@@ -7,3 +7,8 @@ pydantic>=2.4.2
 google-genai>=0.3.0
 numpy<2.0.0
 python-dotenv
+jsonschema>=4.17.0
+pytest>=7.0.0
+fastapi
+uvicorn
+python-multipart

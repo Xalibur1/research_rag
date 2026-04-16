@@ -39,14 +39,8 @@ MANIFEST
 .vscode/
 
 # PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
 
 # Unit test / coverage reports
 htmlcov/
@@ -62,3 +56,28 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+
+# ── Project-specific ────────────────────────────────────────────
+# Raw PDFs (large binary files — user supplies their own)
+papers/*.pdf
+
+# Auto-generated artifact cache (produced at runtime)
+artifacts/
+
+# Auto-generated reports
+report.json
+report.md
+
+# Experiment outputs (reproducible, skip large files)
+experiments/
+eval/results.json
+eval/results_summary.txt
+
+# Fixture / test data
+fixtures/
+
+# Runtime app state
+collections.json
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
