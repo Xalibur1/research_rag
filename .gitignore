@@ -81,3 +81,9 @@ collections.json
 
 # Jupyter checkpoints
 .ipynb_checkpoints/
+
+# v1 single-paper files (superseded by multi_* equivalents)
+extractor.py
+generator.py
+main.py
+test_pydantic.py
